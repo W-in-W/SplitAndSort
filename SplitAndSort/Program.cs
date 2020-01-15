@@ -16,23 +16,23 @@ using System.Threading.Tasks;
 
 namespace SplitAndSort
 {
-    public class SortHelper
+    public class SortInfoHolder
     {
         private long _currentLong = 0;
-        private bool _nextNumber = true;
+        private bool _isNextNumber = true;
         private readonly StreamReader _streamReader;
         public void NextNumber()
         {
-            _nextNumber = true;
+            _isNextNumber = true;
         }
         public bool ReturnLong(out long l)
         {
-            if (_nextNumber)
+            if (_isNextNumber)
             {
                 if (Int64.TryParse(_streamReader.ReadLine(), NumberStyles.AllowLeadingSign, CultureInfo.CurrentCulture,
                     out _currentLong))
                 {
-                    _nextNumber = false;
+                    _isNextNumber = false;
                     l = _currentLong;
                     return true;
                 }
@@ -49,7 +49,7 @@ namespace SplitAndSort
                 return true;
             }
         }
-        public SortHelper(string path)
+        public SortInfoHolder(string path)
         {
             _streamReader = new StreamReader(path, Encoding.Default);
         }
@@ -163,39 +163,39 @@ namespace SplitAndSort
         static void FinalSort()
         {
             Console.WriteLine("Final sorting has started");
-            string[] files = Directory.GetFiles(TempDirectory);
-            List<long> lineOfLongs = new List<long>(files.Length);
-            List<SortHelper> sortHelpers = new List<SortHelper>(files.Length);
-            for (int i = 0; i < files.Length; i++)
-            {
-                sortHelpers.Add(new SortHelper(files[i]));
-            }
+            string[] filesPaths = Directory.GetFiles(TempDirectory);
+            List<long> longsForSort = new List<long>(filesPaths.Length);
+            List<SortInfoHolder> sortInfoHolders = new List<SortInfoHolder>(filesPaths.Length);
             List<long> longsToWrite = new List<long>();
-            for (int filesLeft = files.Length; filesLeft > 0;)
+            for (int i = 0; i < filesPaths.Length; i++)
             {
-                for (int i = 0; i < sortHelpers.Count(); i++)
+                sortInfoHolders.Add(new SortInfoHolder(filesPaths[i]));
+            }
+            for (int filesLeft = filesPaths.Length; filesLeft > 0;)
+            {
+                for (int i = 0; i < sortInfoHolders.Count(); i++)
                 {
-                    if (sortHelpers[i] != null && sortHelpers[i].ReturnLong(out long longNumber))
+                    if (sortInfoHolders[i] != null && sortInfoHolders[i].ReturnLong(out long longNumber))
                     {
-                        lineOfLongs.Add(longNumber);
+                        longsForSort.Add(longNumber);
                     }
                     else
                     {
-                        sortHelpers.Remove(sortHelpers[i]);
+                        sortInfoHolders.Remove(sortInfoHolders[i]);
                         filesLeft--;
                     }
                 }
-                if (lineOfLongs.Count > 0)
+                if (longsForSort.Count > 0)
                 {
-                    long minLong = lineOfLongs.Min(m => m); // Predicate<T>
+                    long minLong = longsForSort.Min(m => m);
                     longsToWrite.Add(minLong);
-                    int minPos = lineOfLongs.IndexOf(minLong);
-                    if (sortHelpers[minPos] != null)
+                    int minPos = longsForSort.IndexOf(minLong);
+                    if (sortInfoHolders[minPos] != null)
                     {
-                        sortHelpers[minPos].NextNumber();
+                        sortInfoHolders[minPos].NextNumber();
                     }
                 }
-                if (filesLeft == 0 && lineOfLongs.Count == 0 || longsToWrite.Count == 1000000)
+                if (filesLeft == 0 && longsForSort.Count == 0 || longsToWrite.Count == 1000000)
                 {
                     using (StreamWriter sw = new StreamWriter(ProgramDirectory + $@"\SortedFile.txt", true, Encoding.Default))
                     {
@@ -206,7 +206,7 @@ namespace SplitAndSort
                     }
                     longsToWrite.Clear();
                 }
-                lineOfLongs.Clear();
+                longsForSort.Clear();
             }
         }
 
