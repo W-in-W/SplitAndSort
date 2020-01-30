@@ -64,11 +64,9 @@ namespace SplitAndSort
         #endregion
         static void SplitAndSort()
         {
-            Action del1 = () => SplitFile(SourceFile1, 1);
-            Action del2 = () => SplitFile(SourceFile2, 2);
             Directory.CreateDirectory(TempDirectory);
-            Task task1 = new Task(del1);
-            Task task2 = new Task(del2);
+            Task task1 = new Task(() => SplitFile(SourceFile1, 1));
+            Task task2 = new Task(() => SplitFile(SourceFile2, 2));
             task1.Start();
             task2.Start();
             task1.Wait();
