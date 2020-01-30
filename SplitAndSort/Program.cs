@@ -121,11 +121,11 @@ namespace SplitAndSort
         }
         static void FinalSort()
         {
+            StreamWriter sw = new StreamWriter(ProgramDirectory + $@"\SortedFile.txt", true, Encoding.Default);
             Console.WriteLine("Final sorting has started");
             string[] filesPaths = Directory.GetFiles(TempDirectory);
             List<long> longsForSort = new List<long>(filesPaths.Length);
             List<SortInfoHolder> sortInfoHolders = new List<SortInfoHolder>(filesPaths.Length);
-            List<long> longsToWrite = new List<long>();
             for (int i = 0; i < filesPaths.Length; i++)
             {
                 sortInfoHolders.Add(new SortInfoHolder(filesPaths[i]));
@@ -147,26 +147,16 @@ namespace SplitAndSort
                 if (longsForSort.Count > 0)
                 {
                     long minLong = longsForSort.Min(m => m);
-                    longsToWrite.Add(minLong);
+                    sw.WriteLine(minLong);
                     int minPos = longsForSort.IndexOf(minLong);
                     if (sortInfoHolders[minPos] != null)
                     {
                         sortInfoHolders[minPos].NextNumber();
                     }
                 }
-                if (filesLeft == 0 && longsForSort.Count == 0 || longsToWrite.Count == 1000000)
-                {
-                    using (StreamWriter sw = new StreamWriter(ProgramDirectory + $@"\SortedFile.txt", true, Encoding.Default))
-                    {
-                        foreach (var l in longsToWrite)
-                        {
-                            sw.WriteLine(l);
-                        }
-                    }
-                    longsToWrite.Clear();
-                }
                 longsForSort.Clear();
             }
+            sw.Close();
         }
 
         public static void Main(string[] args)
