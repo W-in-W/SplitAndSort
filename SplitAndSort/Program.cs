@@ -82,7 +82,7 @@ namespace SplitAndSort
         {
             if (File.Exists(path))
             {
-                Console.WriteLine("Splitting has started (source1)");
+                Console.WriteLine($"Splitting has started (source{index})");
                 List<long> tempFile = new List<long>();
                 bool isFileEnded = false;
                 using (StreamReader sr = new StreamReader(SourceFile1, Encoding.Default))
