@@ -119,8 +119,8 @@ namespace SplitAndSort
         }
         static void FinalSort()
         {
-            StreamWriter sw = new StreamWriter(ProgramDirectory + $@"\SortedFile.txt", true, Encoding.Default);
             Console.WriteLine("Final sorting has started");
+            StreamWriter sw = new StreamWriter(ProgramDirectory + $@"\SortedFile.txt", true, Encoding.Default);
             string[] filesPaths = Directory.GetFiles(TempDirectory);
             List<long> longsForSort = new List<long>(filesPaths.Length);
             List<SortInfoHolder> sortInfoHolders = new List<SortInfoHolder>(filesPaths.Length);
@@ -156,7 +156,6 @@ namespace SplitAndSort
             }
             sw.Close();
         }
-
         public static void Main(string[] args)
         {
             SplitAndSort();
