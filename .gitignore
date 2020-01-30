@@ -3,3 +3,7 @@
 ################################################################################
 
 /SplitAndSort/bin/x64/Debug/source2.txt
+/SplitAndSort/bin/x64/Debug/source1.txt
+/SplitAndSort/obj
+/SplitAndSort/bin/x64/Debug
+/.vs/SplitAndSort/v16

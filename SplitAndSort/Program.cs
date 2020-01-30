@@ -54,18 +54,18 @@ namespace SplitAndSort
             _streamReader = new StreamReader(path, Encoding.Default);
         }
     }
-    internal class Program
+    public class Program
     {
         #region Paths
-        static readonly string ProgramDirectory = Directory.GetCurrentDirectory();
-        static readonly string TempDirectory = ProgramDirectory + @"\temp";
+        public static readonly string ProgramDirectory = Directory.GetCurrentDirectory();
+        public static readonly string TempDirectory = ProgramDirectory + @"\temp";
         static readonly string SourceFile1 = ProgramDirectory + @"\source1.txt";
         static readonly string SourceFile2 = ProgramDirectory + @"\source2.txt";
         #endregion
         static void SplitAndSort()
         {
-            Action del1 = SplitFile1;
-            Action del2 = SplitFile2;
+            Action del1 = () => SplitFile(SourceFile1, 1);
+            Action del2 = () => SplitFile(SourceFile2, 2);
             Directory.CreateDirectory(TempDirectory);
             Task task1 = new Task(del1);
             Task task2 = new Task(del2);
@@ -73,14 +73,14 @@ namespace SplitAndSort
             task2.Start();
             task1.Wait();
             task2.Wait();
-            Console.WriteLine("Files are splitted.");
+            Console.WriteLine("Files are splitted");
             FinalSort();
             Thread.Sleep(2000);
             Directory.Delete(TempDirectory, true);
         }
-        static void SplitFile1()
+        static void SplitFile (string path, int index)
         {
-            if (File.Exists(SourceFile1))
+            if (File.Exists(path))
             {
                 Console.WriteLine("Splitting has started (source1)");
                 List<long> tempFile = new List<long>();
@@ -95,7 +95,7 @@ namespace SplitAndSort
                         {
                             if (Int64.TryParse(sr.ReadLine(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.CurrentCulture, out templong))
                             {
-                                tempFile.Add(templong);
+                               tempFile.Add(templong);
                             }
                             else
                             {
@@ -105,59 +105,18 @@ namespace SplitAndSort
                         }
                         counter++;
                         tempFile.Sort();
-                        using (StreamWriter sw = new StreamWriter(TempDirectory + $@"\temp1 {counter}.txt", false, Encoding.Default))
+                        using (StreamWriter sw = new StreamWriter(TempDirectory + $@"\temp{index} {counter}.txt", false, Encoding.Default))
                         {
                             tempFile.ForEach(l => sw.WriteLine(l));
                         }
                         tempFile.Clear();
                     }
                 }
-                Console.WriteLine("source1 has splitted");
+                Console.WriteLine($"source{index} has splitted");
             }
             else
             {
-                Console.WriteLine("source1 not found");
-            }
-        }
-        static void SplitFile2()
-        {
-            if (File.Exists(SourceFile2))
-            {
-                Console.WriteLine("Splitting has started (source2)");
-                List<long> tempFile = new List<long>();
-                bool isFileEnded = false;
-                using (StreamReader sr = new StreamReader(SourceFile2, Encoding.Default))
-                {
-                    long templong = 0;
-                    int counter = 0;
-                    while (!isFileEnded)
-                    {
-                        for (int i = 0; i < 24000000; i++)
-                        {
-                            if (Int64.TryParse(sr.ReadLine(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.CurrentCulture, out templong))
-                            {
-                                tempFile.Add(templong);
-                            }
-                            else
-                            {
-                                isFileEnded = true;
-                                break;
-                            }
-                        }
-                        counter++;
-                        tempFile.Sort();
-                        using (StreamWriter sw = new StreamWriter(TempDirectory + $@"\temp2 {counter}.txt", false, Encoding.Default))
-                        {
-                            tempFile.ForEach(l => sw.WriteLine(l));
-                        }
-                        tempFile.Clear();
-                    }
-                }
-                Console.WriteLine("source2 has splitted");
-            }
-            else
-            {
-                Console.WriteLine("source2 not found");
+                Console.WriteLine($"source{index} not found");
             }
         }
         static void FinalSort()
