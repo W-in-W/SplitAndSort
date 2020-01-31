@@ -54,7 +54,7 @@ namespace SplitAndSort
             _streamReader = new StreamReader(path, Encoding.Default);
         }
     }
-    public class Program
+    public class Sort
     {
         #region Paths
         public static readonly string ProgramDirectory = Directory.GetCurrentDirectory();
@@ -62,7 +62,7 @@ namespace SplitAndSort
         static readonly string SourceFile1 = ProgramDirectory + @"\source1.txt";
         static readonly string SourceFile2 = ProgramDirectory + @"\source2.txt";
         #endregion
-        static void SplitAndSort()
+        public static void SplitAndSort()
         {
             Directory.CreateDirectory(TempDirectory);
             Task task1 = new Task(() => SplitFile(SourceFile1, 1));
@@ -76,7 +76,7 @@ namespace SplitAndSort
             Thread.Sleep(2000);
             Directory.Delete(TempDirectory, true);
         }
-        static void SplitFile (string path, int index)
+        static void SplitFile(string path, int index)
         {
             if (File.Exists(path))
             {
@@ -93,7 +93,7 @@ namespace SplitAndSort
                         {
                             if (Int64.TryParse(sr.ReadLine(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.CurrentCulture, out templong))
                             {
-                               tempFile.Add(templong);
+                                tempFile.Add(templong);
                             }
                             else
                             {
@@ -156,9 +156,12 @@ namespace SplitAndSort
             }
             sw.Close();
         }
+    }
+    public class Program
+    {
         public static void Main(string[] args)
         {
-            SplitAndSort();
+            Sort.SplitAndSort();
             Console.WriteLine("Sorting is over. Press any key to exit.");
             Console.ReadKey();
         }
